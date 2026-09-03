@@ -8,8 +8,8 @@ template<size_t Capacity>
 class SPSCQueue
 {
 	private:
-		std::atomic<size_t> head_;
-		std::atomic<size_t> tail_;
+		alignas(64) std::atomic<size_t> head_;
+		alignas(64) std::atomic<size_t> tail_;
 		std::array<Order,Capacity> buffer_;
 	public:
 		SPSCQueue():head_(0),tail_(0){}

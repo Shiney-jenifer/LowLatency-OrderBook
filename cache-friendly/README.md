@@ -1,24 +1,43 @@
-# Tests
+# Order Book Matching Engine (Cache-Friendly, C++14)
 
-Each test is a pair of files: an input fed to the engine on stdin, and the
-expected output on stdout.
+A limit-order-book matching engine using contiguous vectors and integer-tick
+pricing, designed for cache efficiency and clarity.
 
-## Test 1 — Comprehensive (`test1_input.txt` / `test1_expected.txt`)
+## Overview
 
-Exercises the full feature set: multiple resting orders on both sides, a
-malformed message (`BADMESSAGE`) that is skipped, a cancel (`1,1000004`),
-and a final aggressive buy that sweeps two price levels producing partial
-and full fills.
+Orders are organized into price levels, with each side kept sorted so the best
+bid/ask is always at the front. Resting orders at a price are held in arrival
+order (FIFO). Matching follows price-time priority: the best price trades first,
+and among equal prices the oldest order trades first.
 
-## Test 2 — Simple full match (`test2_input.txt` / `test2_expected.txt`)
+## Features
 
-A single sell rests, then a matching buy fully fills it — both orders are
-reported as fully filled.
+- Price-time priority matching (add, cancel, partial and full fills)
+- Cache-friendly design using contiguous vectors and integer-tick pricing
+- Best bid/ask found in O(1); new price levels inserted via binary search
+- Robust input handling (malformed messages are skipped, never crash)
 
-## Running a test
+## Structure
 
-    ./engine < test1_input.txt
+- `include/` — header files (Order.h, OrderBook.h)
+- `src/` — source files (OrderBook.cpp, main.cpp)
+- `tests/` — test cases
 
-Compare the output against the matching `_expected.txt` file. On Linux/Mac:
+## Build
 
-    ./engine < test1_input.txt | diff - test1_expected.txt && echo PASS
+    g++ -std=c++14 -O2 -Iinclude src/OrderBook.cpp src/main.cpp -o engine
+
+## Run
+
+    ./engine < input.txt
+
+## Input format
+
+    0,orderId,side,quantity,price    (add;  side 0 = buy, 1 = sell)
+    1,orderId                        (cancel)
+
+## Output format
+
+    2,quantity,price                 (trade)
+    3,orderId                        (order fully filled)
+    4,orderId,remainingQuantity      (order partially filled)
