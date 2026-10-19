@@ -1,6 +1,6 @@
 # LowLatency-OrderBook
 
-A limit-order-book matching engine in C++14, exploring low-latency design.
+A limit-order-book matching engine in C++20, exploring low-latency design.
 Two matching-engine designs plus a lock-free queue that decouples order
 ingestion from matching.
 
