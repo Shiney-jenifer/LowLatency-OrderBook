@@ -33,5 +33,5 @@ Malformed input is skipped and logged to stderr; the engine never crashes.
 
 ## Build & Run
 
-    g++ -std=c++14 -O2 -pthread <sources> -o engine
+    g++ -std=c++20 -O2 -pthread <sources> -o engine
     ./engine < input.txt
